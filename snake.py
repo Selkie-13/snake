@@ -1,4 +1,3 @@
-# -*- coding:Utf-8 -*-
 import pygame
 import sqlite3
 import random
