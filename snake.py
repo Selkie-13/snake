@@ -40,9 +40,9 @@ def settings(settingsValue):
 	menu_font = pygame.font.SysFont("None",40)
 	color_inactive = pygame.Color(150,150,150)
 	color_active = pygame.Color(250,250,250)
-	options = [Option(" Main Menu -",(170,300))]
-	speed = [Option("x0.5",(175,100)),Option("x1",(250,100)),Option("x2",(300,100))]
-	dim = [Option("20x20",(145,200)),Option("30x30",(230,200)),Option("40x40",(320,200))]	
+	options = [Option(" Main Menu -",(130,300))]
+	speed = [Option("x0.5",(145,100)),Option("x1",(240,100)),Option("x2",(290,100))]
+	dim = [Option("20x20",(135,200)),Option("30x30",(220,200)),Option("40x40",(310,200))]	
 	speedOption = [0.5,1,2]
 	dimOption = [2,3,4]  
 	while True:
@@ -69,8 +69,8 @@ def settings(settingsValue):
 			for i in dim:
 				if i.rect.collidepoint(event.pos):
 					settingsValue[1] = dimOption[dim.index(i)]
-		gameDisplay.blit(menu_font.render("Speed : ",30,(100,100,100)), (50,100))
-		gameDisplay.blit(menu_font.render("Dims : ",30,(100,100,100)), (50,200))
+		gameDisplay.blit(menu_font.render("Speed: ",20,(100,100,100)), (50,100))
+		gameDisplay.blit(menu_font.render("Dims: ",20,(100,100,100)), (50,200))
 		pygame.display.flip()
 		continue
 	return(settingsValue)
@@ -156,6 +156,30 @@ def scores(score):
 		pygame.draw.rect(gameDisplay, color, input_box, 2)
 		pygame.display.flip()
 
+def highscore():
+	gameDisplay = pygame.display.set_mode((400,400))
+	myfont = pygame.font.SysFont("None",20)
+	userfont = pygame.font.SysFont("monospace",20)
+	options = [Option(" Main Menu -",(55,300))]
+	color_inactive = pygame.Color(150,150,150)
+	color_active = pygame.Color(250,250,250)
+	color = color_inactive
+	active = False
+	text = ""
+	input_box = pygame.Rect(70,50,120,25)
+	while True:
+		gameDisplay.fill(0)
+		optionDraw(options)
+		res = c.execute("SELECT * FROM snake ORDER BY Score DESC LIMIT 10").fetchall()
+		tableStr = ""
+		x,y = input_box.bottomleft
+		for row in res:
+			txt = str(row[0])+" -> "+str(row[1])
+		txt = userfont.render(text, True, color)
+		gameDisplay.blit(txt,(input_box.x+5,input_box.y+3))
+		pygame.draw.rect(gameDisplay, color, input_box, 2)
+		pygame.display.flip()
+
 if __name__ == '__main__':
 	pygame.init()
 	connection = sqlite3.connect("snake.db")
@@ -163,7 +187,7 @@ if __name__ == '__main__':
 	gameDisplay = pygame.display.set_mode((400,400))
 	pygame.display.set_caption('Snake')
 	menu_font = pygame.font.Font(None, 40)
-	options = [Option("NEW GAME", (115, 105)),Option("OPTIONS", (130, 155)), Option("QUIT",(155,205))]
+	options = [Option("NEW GAME", (115, 105)),Option("OPTIONS", (130, 155)), Option("QUIT",(155,205)), Option("SCORES",(135,255))]
 	running = True
 	settingsValue = [1,2,1]
 	while running:
@@ -182,4 +206,6 @@ if __name__ == '__main__':
 				settingsValue = settings(settingsValue)
 			if options[2].rect.collidepoint(event.pos):
 				running = False
+			if options[3].rect.collidepoint(event.pos):
+				highscore()
 
